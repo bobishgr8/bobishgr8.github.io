@@ -62,21 +62,25 @@ section h2 {
     padding-bottom: 10px;
 }
 
+.gallery-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
 .gallery-container {
     display: flex;
-    flex-direction: column;
     gap: 20px;
+    animation: scroll 20s linear infinite;
 }
 
 .gallery-item {
-    position: relative;
     background-color: white;
     border: 1px solid #e9ecef;
     border-radius: 10px;
     overflow: hidden;
     display: flex;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    transform: translateX(-100%);
+    width: 300px;
+    flex-shrink: 0;
 }
 
 .gallery-item img {
@@ -97,18 +101,13 @@ section h2 {
 
 .card-content h3 {
     margin: 0 0 10px;
-    font-size: 24px;
+    font-size: 18px;
     color: #ffc107;
 }
 
 .card-content p {
     margin: 0;
-    font-size: 16px;
-}
-
-.gallery-item.in-view {
-    transform: translateX(0);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
 }
 
 footer {
@@ -128,21 +127,21 @@ footer a:hover {
     text-decoration: underline;
 }
 
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
 @media (max-width: 768px) {
+    .gallery-container {
+        animation: scroll 40s linear infinite;
+    }
+
     .gallery-item {
-        flex-direction: column;
-        transform: translateY(-100%);
-    }
-
-    .gallery-item.in-view {
-        transform: translateY(0);
-    }
-
-    .card-content {
-        width: 100%;
-    }
-
-    .gallery-item img {
-        width: 100%;
+        width: 250px;
     }
 }

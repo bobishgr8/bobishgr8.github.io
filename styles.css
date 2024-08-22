@@ -9,12 +9,11 @@ body {
 header {
     background-color: #212529;
     color: white;
-    padding: 15px 0;
+    padding: 20px;
     text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
 }
 
 header .logo img {
@@ -27,10 +26,6 @@ nav ul {
     margin: 0;
     display: flex;
     gap: 30px;
-}
-
-nav ul li {
-    margin: 0;
 }
 
 nav ul li a {
@@ -69,28 +64,50 @@ section h2 {
 
 .gallery-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 20px;
-    justify-content: space-between;
 }
 
 .gallery-item {
-    width: 30%;
+    position: relative;
     background-color: white;
     border: 1px solid #e9ecef;
     border-radius: 10px;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    transform: translateX(-100%);
 }
 
 .gallery-item img {
-    width: 100%;
+    width: 50%;
     height: auto;
     display: block;
 }
 
-.gallery-item:hover {
-    transform: translateY(-5px);
+.card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #212529;
+    color: white;
+    width: 50%;
+}
+
+.card-content h3 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    color: #ffc107;
+}
+
+.card-content p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.gallery-item.in-view {
+    transform: translateX(0);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
@@ -111,21 +128,21 @@ footer a:hover {
     text-decoration: underline;
 }
 
-ul {
-    padding-left: 20px;
-}
-
-ul li {
-    margin-bottom: 10px;
-}
-
 @media (max-width: 768px) {
-    .gallery-container {
+    .gallery-item {
         flex-direction: column;
-        align-items: center;
+        transform: translateY(-100%);
     }
 
-    .gallery-item {
-        width: 80%;
+    .gallery-item.in-view {
+        transform: translateY(0);
+    }
+
+    .card-content {
+        width: 100%;
+    }
+
+    .gallery-item img {
+        width: 100%;
     }
 }

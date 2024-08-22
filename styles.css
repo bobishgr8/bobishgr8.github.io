@@ -42,6 +42,7 @@ nav ul li a:hover {
 }
 
 section {
+    margin-top: 5px;
     padding: 40px 20px;
     max-width: 900px;
     margin: 0 auto;

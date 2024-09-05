@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game with Fixed-Size Rectangular Image Ball</title>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            background: #000;
+        }
+        h1,p{
+            font-family: Arial, Helvetica, sans-serif;
+            margin: auto;
+            text-align: center;
+        }
+        h1,p {
+            background: linear-gradient(330deg, #3acea8, #9d652e, #c0d517, #1b4e94, #5e1b94, #e11919);
+            background-size: 1200% 1200%;
+
+            -webkit-animation: AnimationName 2s ease infinite;
+            -moz-animation: AnimationName 2s ease infinite;
+            animation: AnimationName 2s ease infinite;
+        }
+
+        @-webkit-keyframes AnimationName {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        @-moz-keyframes AnimationName {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+        @keyframes AnimationName {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+    </style>
+</head>
+<body>
+<canvas id="pongCanvas" width="800" height="400"></canvas>
+<br><br>
+
+<h1>High stakes pong!</h1>
+<p>
+    <br>
+    Step into this game of high stakes pong, where you will be playing as Kim Jong Un on a mission to bounce a nuke to Amerika. Amerika has donald trump defending your nuke. Careful now, the stakes of the world rest in your hands!
+</p>
+<script>
+    const canvas = document.getElementById("pongCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const paddleHeight = 80;
+    const paddleWidth = 20;
+    // Image paths for the paddles and ball
+    const playerImgSrc = 'images/kimmy.jpg';  // Replace with the path to Kim Jong Un image
+    const aiImgSrc = 'images/donald.jpg';    // Replace with the path to Donald Trump image
+    const ballImgSrc = 'images/ball2.png';  // Replace with the path to your rectangular ball image
+
+    let playerImg = new Image();
+    let aiImg = new Image();
+    let ballImg = new Image();
+    playerImg.src = playerImgSrc;
+    aiImg.src = aiImgSrc;
+    ballImg.src = ballImgSrc;
+
+    // Fixed ball dimensions
+    const ballWidth = 40;  // Set fixed width
+    const ballHeight = 20;  // Set fixed height
+
+    let playerY = (canvas.height - paddleHeight) / 2;
+    let aiY = (canvas.height - paddleHeight) / 2;
+    let ballX = canvas.width / 2;
+    let ballY = canvas.height / 2;
+    let ballSpeedX = 4;
+    let ballSpeedY = 4;
+
+    const playerSpeed = 6;
+    const aiSpeed = 4;
+
+    let playerScore = 0;
+    let aiScore = 0;
+
+    let upPressed = false;
+    let downPressed = false;
+
+    // Event listeners for keyboard controls
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if (e.key === "Up" || e.key === "ArrowUp") {
+            upPressed = true;
+        } else if (e.key === "Down" || e.key === "ArrowDown") {
+            downPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if (e.key === "Up" || e.key === "ArrowUp") {
+            upPressed = false;
+        } else if (e.key === "Down" || e.key === "ArrowDown") {
+            downPressed = false;
+        }
+    }
+
+    // Draw the paddles
+    function drawPaddleImage(img, x, y) {
+        ctx.drawImage(img, x, y, paddleWidth * 2, paddleHeight);  // Adjust the width to fit the sprite proportions
+    }
+
+    // Draw the ball image with fixed size
+    function drawBallImage() {
+        ctx.drawImage(ballImg, ballX - ballWidth / 2, ballY - ballHeight / 2, ballWidth, ballHeight);  // Center the ball
+    }
+
+    // Move the ball and handle collisions
+    function moveBall() {
+        ballX += ballSpeedX;
+        ballY += ballSpeedY;
+
+        // Bounce off top/bottom edges
+        if (ballY + ballHeight / 2 > canvas.height || ballY - ballHeight / 2 < 0) {
+            ballSpeedY = -ballSpeedY;
+        }
+
+        // Player paddle collision
+        if (
+            ballX - ballWidth / 2 < paddleWidth * 2 && 
+            ballY > playerY && 
+            ballY < playerY + paddleHeight
+        ) {
+            ballSpeedX = -ballSpeedX;
+        }
+
+        // AI paddle collision
+        if (
+            ballX + ballWidth / 2 > canvas.width - paddleWidth * 2 && 
+            ballY > aiY && 
+            ballY < aiY + paddleHeight
+        ) {
+            ballSpeedX = -ballSpeedX;
+        }
+
+        // Ball goes out of bounds: AI scores or player scores
+        if (ballX - ballWidth / 2 < 0) {
+            aiScore++;
+            resetBall();
+        } else if (ballX + ballWidth / 2 > canvas.width) {
+            playerScore++;
+            resetBall();
+        }
+    }
+
+    function resetBall() {
+        ballX = canvas.width / 2;
+        ballY = canvas.height / 2;
+        ballSpeedX = -ballSpeedX;  // Reverse the ball's direction after a score
+    }
+
+    // Move AI paddle
+    function moveAI() {
+        if (ballY < aiY + paddleHeight / 2) {
+            aiY -= aiSpeed;
+        } else if (ballY > aiY + paddleHeight / 2) {
+            aiY += aiSpeed;
+        }
+    }
+
+    // Move player paddle
+    function movePlayer() {
+        if (upPressed && playerY > 0) {
+            playerY -= playerSpeed;
+        }
+        if (downPressed && playerY < canvas.height - paddleHeight) {
+            playerY += playerSpeed;
+        }
+    }
+
+    // Display the score
+    function drawScore() {
+        ctx.font = "20px Arial";
+        ctx.fillStyle = "#FFF";
+        ctx.fillText(`Kim Jong Un: ${playerScore}`, 50, 30);
+        ctx.fillText(`D J T: ${aiScore}`, canvas.width - 100, 30);
+    }
+
+    // Main drawing function
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawPaddleImage(playerImg, 0, playerY);
+        drawPaddleImage(aiImg, canvas.width - paddleWidth * 2, aiY);
+        drawBallImage();
+        drawScore();
+        moveBall();
+        moveAI();
+        movePlayer();
+    }
+
+    // Start the game loop when the ball image is fully loaded
+    ballImg.onload = function () {
+        setInterval(draw, 16);  // Start the game loop
+    };
+</script>
+</body>
+</html>
